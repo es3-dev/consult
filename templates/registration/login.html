@@ -1,0 +1,23 @@
+{% extends "auth/base_auth.html" %}
+{% block title %}Ingresar | Consult-App{% endblock %}
+{% block content %}
+<h2 class="text-lg font-semibold">Ingresar</h2>
+<p class="mt-1 text-sm text-slate-500">Accede a tu panel financiero.</p>
+<form method="post" class="mt-6 space-y-4">
+  {% csrf_token %}
+  <div>
+    <label class="field-label" for="{{ form.username.id_for_label }}">Usuario</label>
+    {{ form.username }}
+  </div>
+  <div>
+    <label class="field-label" for="{{ form.password.id_for_label }}">Contrasena</label>
+    {{ form.password }}
+  </div>
+  {% if form.errors %}<p class="text-sm font-medium text-rose-600">Credenciales invalidas.</p>{% endif %}
+  <button class="w-full rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-300">Entrar</button>
+</form>
+<div class="mt-5 flex items-center justify-between text-sm">
+  <a class="font-medium text-indigo-700 hover:text-indigo-900" href="{% url 'password_reset' %}">Recuperar contrasena</a>
+  <a class="font-medium text-indigo-700 hover:text-indigo-900" href="{% url 'register' %}">Crear cuenta</a>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+services:
+  web:
+    build: .
+    container_name: consult_app_web
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_defaults --demo-user &&
+             python manage.py collectstatic --noinput &&
+             gunicorn consult_app.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17
+    container_name: consult_app_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-consult_app}
+      POSTGRES_USER: ${POSTGRES_USER:-consult_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-consult_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-consult_user} -d ${POSTGRES_DB:-consult_app}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
+  static_volume:

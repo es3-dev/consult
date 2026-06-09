@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load finance_extras %}
+{% block title %}Dashboard | Consult-App{% endblock %}
+{% block page_title %}Dashboard financiero{% endblock %}
+{% block content %}
+<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <section class="metric-card p-5"><p class="text-sm text-slate-500">Balance total</p><p class="mt-2 text-2xl font-semibold">{{ metrics.balance|money }}</p></section>
+  <section class="metric-card p-5"><p class="text-sm text-slate-500">Ingresos del mes</p><p class="mt-2 text-2xl font-semibold text-emerald-700">{{ metrics.month_income|money }}</p></section>
+  <section class="metric-card p-5"><p class="text-sm text-slate-500">Gastos del mes</p><p class="mt-2 text-2xl font-semibold text-rose-700">{{ metrics.month_expense|money }}</p></section>
+  <section class="metric-card p-5"><p class="text-sm text-slate-500">Ahorro actual</p><p class="mt-2 text-2xl font-semibold text-indigo-700">{{ metrics.savings|money }}</p></section>
+</div>
+
+<div class="mt-6 grid gap-6 xl:grid-cols-[1.4fr_.9fr]">
+  <section class="metric-card p-5">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-base font-semibold">Flujo de caja</h2>
+      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">2026</span>
+    </div>
+    <canvas id="cashFlowChart" height="120"></canvas>
+  </section>
+  <section class="metric-card p-5">
+    <h2 class="text-base font-semibold">Gastos por categoria</h2>
+    {% if metrics.expenses_by_category %}
+      <canvas id="categoryChart" class="mt-4" height="185"></canvas>
+    {% else %}
+      <div class="mt-5 rounded-lg border border-dashed border-slate-300 p-8 text-center">
+        <i data-lucide="pie-chart" class="mx-auto h-8 w-8 text-slate-400"></i>
+        <p class="mt-3 text-sm font-medium">Sin gastos este mes</p>
+        <p class="mt-1 text-xs text-slate-500">Registra movimientos para ver la distribucion.</p>
+      </div>
+    {% endif %}
+  </section>
+</div>
+
+<div class="mt-6">
+  <section class="metric-card p-5">
+    <div class="mb-4 flex items-center gap-2"><i data-lucide="sparkles" class="h-5 w-5 text-indigo-600"></i><h2 class="text-base font-semibold">Asistente financiero</h2></div>
+    <div class="grid gap-3 sm:grid-cols-2">
+      {% for item in insights.recommendations %}
+        <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">{{ item }}</div>
+      {% empty %}
+        <div class="rounded-lg border border-dashed border-slate-300 p-6 text-sm text-slate-500">Aun no hay datos suficientes para recomendar acciones.</div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+<div class="mt-6 grid gap-6 xl:grid-cols-2">
+  <section class="metric-card p-5">
+    <h2 class="text-base font-semibold">Movimientos recientes</h2>
+    <div class="mt-4 space-y-3">
+      {% for expense in metrics.recent_expenses %}
+        <div class="flex items-center justify-between rounded-lg border border-slate-100 p-3">
+          <div><p class="text-sm font-medium">{{ expense.merchant }}</p><p class="text-xs text-slate-500">{{ expense.category.name }} · {{ expense.date }}</p></div>
+          <span class="text-sm font-semibold text-rose-700">-{{ expense.amount|money }}</span>
+        </div>
+      {% empty %}
+        <div class="skeleton h-14 rounded-lg"></div>
+      {% endfor %}
+    </div>
+  </section>
+  <section class="metric-card p-5">
+    <h2 class="text-base font-semibold">Alertas</h2>
+    <div class="mt-4 space-y-3">
+      {% for notification in notifications %}
+        <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm"><p class="font-semibold">{{ notification.title }}</p><p class="text-amber-800">{{ notification.message }}</p></div>
+      {% empty %}
+        <div class="rounded-lg border border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">No hay alertas activas.</div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const categoryData = {{ metrics.expenses_by_category|as_json|safe }};
+const monthlyIncome = {{ metrics.monthly_income|as_json|safe }};
+const monthlyExpense = {{ metrics.monthly_expense|as_json|safe }};
+const labels = [...new Set([...monthlyIncome, ...monthlyExpense].map(item => new Date(item.month).toLocaleDateString('es-CO', {month:'short'})))];
+new Chart(document.getElementById('cashFlowChart'), {
+  type: 'bar',
+  data: { labels, datasets: [
+    { label: 'Ingresos', data: monthlyIncome.map(i => Number(i.total)), backgroundColor: '#059669', borderRadius: 8 },
+    { label: 'Gastos', data: monthlyExpense.map(i => Number(i.total)), backgroundColor: '#e11d48', borderRadius: 8 }
+  ]},
+  options: { responsive:true, plugins:{legend:{position:'bottom'}}, scales:{y:{grid:{color:'#e2e8f0'}}, x:{grid:{display:false}}} }
+});
+if (categoryData.length) {
+  new Chart(document.getElementById('categoryChart'), {
+    type: 'doughnut',
+    data: { labels: categoryData.map(i => i.category__name), datasets: [{ data: categoryData.map(i => Number(i.total)), backgroundColor: categoryData.map(i => i.category__color || '#2563eb'), borderWidth: 0 }] },
+    options: { cutout:'68%', plugins:{legend:{position:'bottom'}} }
+  });
+}
+</script>
+{% endblock %}

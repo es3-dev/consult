@@ -1,0 +1,37 @@
+<div id="voice-command-widget" class="voice-widget" data-endpoint="{% url 'api-v1-voice-command' %}">
+  <div id="voice-command-panel" class="voice-panel hidden" role="dialog" aria-modal="false" aria-labelledby="voice-command-title">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h2 id="voice-command-title" class="text-sm font-semibold text-slate-950">Comando por voz</h2>
+        <p id="voice-command-status" class="mt-1 text-xs text-slate-500">Pulsa el micrófono o escribe el comando.</p>
+      </div>
+      <button id="voice-command-close" class="rounded-lg p-1 text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-300" aria-label="Cerrar comando por voz">
+        <i data-lucide="x" class="h-4 w-4"></i>
+      </button>
+    </div>
+
+    <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3">
+      <label for="voice-command-transcript" class="text-xs font-semibold uppercase text-slate-500">Comando</label>
+      <textarea id="voice-command-transcript" rows="3" class="mt-2 w-full resize-none border-0 bg-transparent p-0 text-sm text-slate-800 shadow-none focus:ring-0" placeholder="Ejemplo: Gaste veinte mil en comida"></textarea>
+    </div>
+
+    <div id="voice-command-confirmation" class="mt-4 hidden rounded-lg border border-indigo-200 bg-indigo-50 p-3">
+      <p class="text-xs font-semibold uppercase text-indigo-700">Confirmar antes de guardar</p>
+      <p id="voice-command-summary" class="mt-2 text-sm text-indigo-950"></p>
+    </div>
+
+    <div class="mt-4 grid grid-cols-2 gap-2">
+      <button id="voice-command-start" class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+        <i data-lucide="mic" class="h-4 w-4"></i>Escuchar
+      </button>
+      <button id="voice-command-save" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-300" disabled>
+        <i data-lucide="check" class="h-4 w-4"></i>Guardar
+      </button>
+    </div>
+  </div>
+
+  <button id="voice-command-fab" class="voice-fab" aria-label="Registrar movimiento por voz">
+    <span class="voice-pulse" aria-hidden="true"></span>
+    <i data-lucide="mic" class="relative h-6 w-6"></i>
+  </button>
+</div>

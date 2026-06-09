@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Perfil | Consult-App{% endblock %}
+{% block page_title %}Perfil de usuario{% endblock %}
+{% block content %}
+<section class="metric-card max-w-2xl p-5">
+  <h2 class="text-base font-semibold">Datos personales</h2>
+  <form method="post" class="mt-5 grid gap-4 md:grid-cols-2">{% csrf_token %}
+    {% for field in form %}<div><label class="field-label">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+    <button class="md:col-span-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Actualizar perfil</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% load static %}
+<!doctype html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Consult-App{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="min-h-full text-slate-950 antialiased">
+  <div x-data="{open:false}" class="min-h-screen lg:flex">
+    <aside class="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-slate-200 bg-white/90 px-4 py-5 backdrop-blur lg:block">
+      {% include "components/sidebar.html" %}
+    </aside>
+    <div class="lg:pl-72 flex min-h-screen w-full flex-col">
+      <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur lg:px-8">
+        <div class="flex items-center justify-between gap-3">
+          <button class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 lg:hidden" @click="open=true" aria-label="Abrir menu">
+            <i data-lucide="menu" class="h-5 w-5"></i>
+          </button>
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Consult-App</p>
+            <h1 class="text-lg font-semibold text-slate-950">{% block page_title %}Finanzas personales{% endblock %}</h1>
+          </div>
+          <a href="{% url 'profile' %}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium shadow-sm transition hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            <i data-lucide="user-round" class="h-4 w-4"></i>
+            <span class="hidden sm:inline">{{ request.user.first_name|default:request.user.username }}</span>
+          </a>
+        </div>
+      </header>
+      <div x-show="open" x-transition class="fixed inset-0 z-50 bg-slate-950/40 lg:hidden" @click="open=false">
+        <nav class="h-full w-72 bg-white px-4 py-5 shadow-xl" @click.stop>
+          {% include "components/sidebar.html" %}
+        </nav>
+      </div>
+      <main class="flex-1 px-4 py-6 lg:px-8">
+        {% if messages %}
+          <div class="mb-5 space-y-2" role="status">
+            {% for message in messages %}
+              <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  {% if request.user.is_authenticated %}
+    {% include "components/voice_fab.html" %}
+    <script src="{% static 'js/voice-command.js' %}"></script>
+  {% endif %}
+  <script>lucide.createIcons();</script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

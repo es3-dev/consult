@@ -1,0 +1,70 @@
+Consult-App - Guia futura para integracion por voz
+
+Endpoint interno versionado:
+POST /api/v1/voice/command
+Authorization: Bearer <access_token>
+Body JSON:
+{
+  "command": "Gaste veinte mil pesos en comida"
+}
+
+Formatos reconocidos:
+- Registrar gasto <categoria> <monto>
+- Registrar ingreso <categoria> <monto>
+- Gaste veinte mil en almuerzo
+- Pague quince mil de transporte
+- Recibi dos millones de salario
+- Ingrese quinientos mil pesos
+
+Respuesta esperada:
+{
+  "success": true,
+  "transaction_created": true,
+  "type": "expense",
+  "category": "food",
+  "category_name": "Alimentacion",
+  "amount": 20000
+}
+
+Arquitectura recomendada:
+1. El asistente externo captura la frase del usuario.
+2. Un shortcut/action/skill transforma la frase en JSON.
+3. El integrador autentica contra /api/token/ con un usuario autorizado.
+4. El integrador envia el comando a /api/v1/voice/command.
+5. Consult-App registra el movimiento y guarda VoiceCommandLog para auditoria.
+6. El parser usa spaCy para tokenizar el texto en espanol, detectar intencion, categoria y monto.
+
+Frontend web:
+1. El boton flotante de microfono usa Web Speech API.
+2. Muestra texto reconocido en tiempo real con resultados parciales.
+3. Antes de guardar, muestra una confirmacion visual del comando.
+4. Envia el comando confirmado a /api/v1/voice/command usando la sesion Django y CSRF.
+
+Siri Shortcuts:
+1. Crear un atajo con entrada dictada.
+2. Agregar accion "Obtener contenido de URL".
+3. URL: https://tu-dominio.com/api/v1/voice/command
+4. Metodo: POST.
+5. Headers: Authorization Bearer <token>, Content-Type application/json.
+6. Body: {"command": "<texto dictado>"}.
+7. Mostrar la propiedad message de la respuesta.
+
+Google Assistant:
+1. Crear una Action en Google Actions o flujo equivalente.
+2. Capturar intent con entidad libre para el comando.
+3. Enviar webhook a un middleware seguro.
+4. El middleware obtiene/renueva JWT y llama a /api/v1/voice/command.
+5. Responder al usuario con message.
+
+Alexa:
+1. Crear una Alexa Skill con intent RegisterTransactionIntent.
+2. Definir slot libre CommandText.
+3. La funcion Lambda valida permisos y llama al endpoint de Consult-App.
+4. Retornar salida hablada con la respuesta del endpoint.
+
+Seguridad:
+- No guardar tokens permanentes en clientes inseguros.
+- Usar HTTPS obligatorio en produccion.
+- Limitar usuarios de integracion.
+- Rotar refresh tokens.
+- Registrar cada comando en VoiceCommandLog.

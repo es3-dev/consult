@@ -1,0 +1,16 @@
+Django>=5.0,<6.0
+djangorestframework>=3.15
+djangorestframework-simplejwt>=5.3
+drf-spectacular>=0.27
+psycopg[binary]>=3.2
+python-decouple>=3.8
+dj-database-url>=2.2
+gunicorn>=22.0
+whitenoise>=6.7
+openpyxl>=3.1
+reportlab>=4.2
+spacy>=3.7
+click>=8.1
+typer>=0.12
+tqdm>=4.66
+requests>=2.32

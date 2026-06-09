@@ -1,0 +1,18 @@
+{% extends "auth/base_auth.html" %}
+{% block title %}Registro | Consult-App{% endblock %}
+{% block content %}
+<h2 class="text-lg font-semibold">Crear cuenta</h2>
+<p class="mt-1 text-sm text-slate-500">Configura tu espacio financiero en minutos.</p>
+<form method="post" class="mt-6 space-y-4">
+  {% csrf_token %}
+  {% for field in form %}
+    <div>
+      <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<p class="mt-1 text-xs text-rose-600">{{ field.errors|striptags }}</p>{% endif %}
+    </div>
+  {% endfor %}
+  <button class="w-full rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-300">Crear cuenta</button>
+</form>
+<p class="mt-5 text-sm text-slate-500">Ya tienes cuenta? <a class="font-medium text-indigo-700" href="{% url 'login' %}">Ingresar</a></p>
+{% endblock %}

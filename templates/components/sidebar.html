@@ -1,0 +1,21 @@
+<div class="mb-8 flex items-center gap-3">
+  <div class="grid h-10 w-10 place-items-center rounded-lg bg-slate-950 text-white">
+    <i data-lucide="wallet-cards" class="h-5 w-5"></i>
+  </div>
+  <div>
+    <p class="text-sm font-semibold">Consult-App</p>
+    <p class="text-xs text-slate-500">Control financiero</p>
+  </div>
+</div>
+<nav class="space-y-1 text-sm font-medium">
+  <a class="nav-link" href="{% url 'dashboard' %}"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+  <a class="nav-link" href="{% url 'incomes' %}"><i data-lucide="trending-up"></i>Ingresos</a>
+  <a class="nav-link" href="{% url 'expenses' %}"><i data-lucide="trending-down"></i>Gastos</a>
+  <a class="nav-link" href="{% url 'budgets' %}"><i data-lucide="target"></i>Presupuestos</a>
+  <a class="nav-link" href="{% url 'reports' %}"><i data-lucide="file-bar-chart"></i>Reportes</a>
+  <a class="nav-link" href="{% url 'swagger-ui' %}"><i data-lucide="braces"></i>API Docs</a>
+</nav>
+<form method="post" action="{% url 'logout' %}" class="absolute bottom-5 left-4 right-4">
+  {% csrf_token %}
+  <button class="nav-link w-full"><i data-lucide="log-out"></i>Cerrar sesion</button>
+</form>

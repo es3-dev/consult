@@ -1,0 +1,138 @@
+:root { color-scheme: light; }
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  border-radius: .5rem;
+  padding: .625rem .75rem;
+  color: rgb(51 65 85);
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.nav-link:hover, .nav-link:focus {
+  background: rgb(241 245 249);
+  color: rgb(15 23 42);
+  outline: 2px solid transparent;
+}
+.nav-link svg { width: 1rem; height: 1rem; }
+.metric-card {
+  border: 1px solid rgb(226 232 240);
+  border-radius: .75rem;
+  background: white;
+  box-shadow: 0 10px 30px rgb(15 23 42 / 4%);
+}
+.field-label {
+  display: block;
+  margin-bottom: .35rem;
+  font-size: .75rem;
+  font-weight: 700;
+  color: rgb(71 85 105);
+}
+.skeleton {
+  background: linear-gradient(90deg, rgb(241 245 249), rgb(226 232 240), rgb(241 245 249));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+form input, form select, form textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+form input:not([type="hidden"]):not([type="checkbox"]), form select, form textarea {
+  width: 100%;
+  border-radius: .5rem;
+  border: 1px solid rgb(226 232 240);
+  background: white;
+  padding: .5rem .75rem;
+  font-size: .875rem;
+  color: rgb(15 23 42);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+}
+form input:focus, form select:focus, form textarea:focus {
+  border-color: rgb(99 102 241);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(199 210 254);
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+.helptext {
+  display: block;
+  margin-top: .35rem;
+  font-size: .75rem;
+  color: rgb(100 116 139);
+}
+form ul.errorlist {
+  margin-bottom: .5rem;
+  font-size: .75rem;
+  font-weight: 600;
+  color: rgb(225 29 72);
+}
+form p input {
+  width: 100%;
+  border-radius: .5rem;
+  border: 1px solid rgb(226 232 240);
+  padding: .5rem .75rem;
+  font-size: .875rem;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+}
+form p label {
+  display: block;
+  margin-bottom: .35rem;
+  font-size: .75rem;
+  font-weight: 700;
+  color: rgb(71 85 105);
+}
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.voice-widget {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+}
+.voice-fab {
+  position: relative;
+  display: grid;
+  height: 3.5rem;
+  width: 3.5rem;
+  place-items: center;
+  border-radius: 999px;
+  background: rgb(15 23 42);
+  color: white;
+  box-shadow: 0 20px 45px rgb(15 23 42 / 22%);
+  transition: transform .18s ease, background .18s ease;
+}
+.voice-fab:hover, .voice-fab:focus {
+  background: rgb(30 41 59);
+  outline: none;
+  transform: translateY(-1px);
+}
+.voice-fab:focus {
+  box-shadow: 0 0 0 4px rgb(199 210 254), 0 20px 45px rgb(15 23 42 / 22%);
+}
+.voice-pulse {
+  position: absolute;
+  inset: -.35rem;
+  border-radius: 999px;
+  border: 2px solid rgb(99 102 241 / 45%);
+  opacity: 0;
+}
+.voice-fab.is-listening .voice-pulse {
+  animation: voice-pulse 1.15s ease-out infinite;
+  opacity: 1;
+}
+.voice-panel {
+  position: absolute;
+  right: 0;
+  bottom: 4.25rem;
+  width: min(22rem, calc(100vw - 2rem));
+  border-radius: .75rem;
+  border: 1px solid rgb(226 232 240);
+  background: rgb(255 255 255 / 96%);
+  padding: 1rem;
+  box-shadow: 0 24px 60px rgb(15 23 42 / 18%);
+  backdrop-filter: blur(16px);
+}
+@keyframes voice-pulse {
+  0% { transform: scale(.92); opacity: .75; }
+  100% { transform: scale(1.28); opacity: 0; }
+}

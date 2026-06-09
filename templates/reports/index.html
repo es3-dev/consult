@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Reportes | Consult-App{% endblock %}
+{% block page_title %}Reportes{% endblock %}
+{% block content %}
+<section class="metric-card max-w-3xl p-5">
+  <div class="flex items-center gap-2"><i data-lucide="download" class="h-5 w-5 text-indigo-600"></i><h2 class="text-base font-semibold">Generar reporte</h2></div>
+  <form method="get" class="mt-5 grid gap-4 md:grid-cols-2">
+    <div><label class="field-label">Desde</label><input type="date" name="start" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"></div>
+    <div><label class="field-label">Hasta</label><input type="date" name="end" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"></div>
+    <div><label class="field-label">Categoria</label><select name="category" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="">Todas</option>{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select></div>
+    <div><label class="field-label">Tipo</label><select name="type" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="">Todos</option><option value="income">Ingresos</option><option value="expense">Gastos</option></select></div>
+    <button name="format" value="pdf" class="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Descargar PDF</button>
+    <button name="format" value="xlsx" class="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold shadow-sm">Descargar Excel</button>
+  </form>
+</section>
+{% endblock %}

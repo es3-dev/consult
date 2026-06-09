@@ -1,0 +1,29 @@
+{% load static %}
+<!doctype html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Consult-App{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body class="min-h-full text-slate-950 antialiased">
+  <main class="grid min-h-screen place-items-center px-4 py-10">
+    <section class="w-full max-w-md">
+      <div class="mb-6 flex items-center gap-3">
+        <div class="grid h-11 w-11 place-items-center rounded-lg bg-slate-950 text-white"><i data-lucide="wallet-cards"></i></div>
+        <div>
+          <h1 class="text-xl font-semibold">Consult-App</h1>
+          <p class="text-sm text-slate-500">Finanzas personales con claridad.</p>
+        </div>
+      </div>
+      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        {% block content %}{% endblock %}
+      </div>
+    </section>
+  </main>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
