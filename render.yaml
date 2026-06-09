@@ -7,8 +7,6 @@ services:
     dockerContext: .
     healthCheckPath: /health/
 
-    dockerCommand: sh -c 'python manage.py migrate && python manage.py seed_defaults && gunicorn consult_app.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120'
-
     envVars:
       - key: SECRET_KEY
         generateValue: true
