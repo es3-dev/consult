@@ -1,3 +1,9 @@
+# Integrantes:
+- Yurelnis Fernandez Ibañez
+- Emmanuel De Jesús Crespo Moreno
+- Esmeyda Dayana Peñalver Cotes
+- Cristhian Cuadros
+
 # Consult-App
 
 Consult-App es una plataforma web de finanzas personales construida con Django 5, Django REST Framework, PostgreSQL, JWT, Tailwind CSS, Alpine.js y Chart.js. El proyecto incluye panel web responsive, apartados separados para ingresos y gastos, API REST documentada con Swagger, reportes PDF/Excel, presupuestos con alertas y registro de movimientos mediante comandos de voz.
