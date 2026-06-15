@@ -377,7 +377,7 @@ Ruta:
 /facturas/
 ```
 
-El usuario sube una imagen de factura. Si `AI_PROVIDER=gemini`, el sistema intenta extraer:
+El usuario sube una imagen de factura. Si `GEMINI_API_KEY` existe, el sistema intenta extraer:
 
 - Monto.
 - Comercio.
@@ -387,6 +387,14 @@ El usuario sube una imagen de factura. Si `AI_PROVIDER=gemini`, el sistema inten
 El gasto nunca se crea automaticamente. Primero se muestra una propuesta editable y el usuario confirma.
 
 Si Gemini falla o no hay internet, se muestra un formulario manual para que la demo continue.
+
+En Render debes configurar:
+
+```env
+GEMINI_API_KEY=tu_clave_de_gemini
+```
+
+El analizador de facturas usa Gemini cuando esa clave existe, incluso si el chat financiero usa otro proveedor.
 
 ## Reportes
 

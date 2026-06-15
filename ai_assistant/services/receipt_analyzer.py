@@ -12,12 +12,13 @@ logger = logging.getLogger(__name__)
 
 def analyze_receipt_image(image_bytes: bytes, mime_type: str) -> dict:
     """Analiza una factura sin crear gasto automaticamente."""
-    if settings.AI_PROVIDER == "gemini" and settings.GEMINI_API_KEY:
+    if settings.GEMINI_API_KEY:
         try:
             return _analyze_with_gemini(image_bytes, mime_type)
         except Exception as exc:
             logger.warning("Analisis de factura con Gemini fallo: %s", exc)
-    return _mock_receipt_result()
+            return _manual_receipt_result(f"Gemini no pudo analizar la imagen: {exc}")
+    return _manual_receipt_result("GEMINI_API_KEY no esta configurada en el servidor.")
 
 
 def _analyze_with_gemini(image_bytes: bytes, mime_type: str) -> dict:
@@ -58,13 +59,17 @@ def _normalize_result(data: dict) -> dict:
         "merchant": str(data.get("merchant") or "Factura").strip()[:120],
         "category": str(data.get("category") or "Otros").strip(),
         "description": str(data.get("description") or "Gasto detectado desde factura").strip()[:300],
+        "source": "gemini",
+        "warning": "" if amount > 0 else "Gemini respondio, pero no detecto un monto confiable.",
     }
 
 
-def _mock_receipt_result() -> dict:
+def _manual_receipt_result(reason: str) -> dict:
     return {
         "amount": 0,
         "merchant": "Factura pendiente de confirmar",
         "category": "Otros",
         "description": "No se pudo analizar la imagen automaticamente. Completa los datos manualmente.",
+        "source": "manual",
+        "warning": reason,
     }

@@ -10,3 +10,4 @@ class ReceiptAnalyzerTests(SimpleTestCase):
 
         self.assertEqual(result["category"], "Otros")
         self.assertIn("amount", result)
+        self.assertEqual(result["source"], "manual")
