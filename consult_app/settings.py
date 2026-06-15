@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "drf_spectacular",
     "finance",
+    "ai_assistant",
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,10 @@ CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=not DEBUG, cast=bool)
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = False
 X_FRAME_OPTIONS = "DENY"
+
+AI_PROVIDER = config("AI_PROVIDER", default="mock").lower()
+GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
+GROQ_API_KEY = config("GROQ_API_KEY", default="")
+AI_TIMEOUT_SECONDS = config("AI_TIMEOUT_SECONDS", default=20, cast=int)
+AI_MAX_RETRIES = config("AI_MAX_RETRIES", default=2, cast=int)
+AI_RATE_LIMIT_PER_MINUTE = config("AI_RATE_LIMIT_PER_MINUTE", default=10, cast=int)

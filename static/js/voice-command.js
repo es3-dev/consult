@@ -13,6 +13,7 @@
   const transcriptNode = document.getElementById("voice-command-transcript");
   const confirmation = document.getElementById("voice-command-confirmation");
   const summary = document.getElementById("voice-command-summary");
+  const isAssistantPage = window.location.pathname.startsWith("/asistente");
 
   let recognition = null;
   let finalTranscript = "";
@@ -48,7 +49,7 @@
     transcriptNode.value = value || "";
     confirmation.classList.toggle("hidden", !isFinal || !value);
     save.disabled = !isFinal || !value;
-    if (isFinal && value) summary.textContent = `Se guardara este comando: "${value}"`;
+    if (isFinal && value) summary.textContent = isAssistantPage ? `Se preguntara a la IA: "${value}"` : `Se guardara este comando: "${value}"`;
   }
 
   function setStartButton(listening) {
@@ -189,6 +190,12 @@
   async function saveCommand() {
     const command = (transcriptNode.value || finalTranscript).trim();
     if (!command) return;
+    if (isAssistantPage) {
+      window.dispatchEvent(new CustomEvent("consultapp:ask-ai", { detail: { question: command } }));
+      status.textContent = "Pregunta enviada al asistente.";
+      setTimeout(hidePanel, 500);
+      return;
+    }
     save.disabled = true;
     status.textContent = "Guardando movimiento...";
     const response = await fetch(endpoint, {
@@ -242,6 +249,10 @@
     finalTranscript = command;
     confirmation.classList.toggle("hidden", !command);
     save.disabled = !command;
-    if (command) summary.textContent = `Se guardara este comando: "${command}"`;
+    if (command) summary.textContent = isAssistantPage ? `Se preguntara a la IA: "${command}"` : `Se guardara este comando: "${command}"`;
   });
+  if (isAssistantPage) {
+    status.textContent = "Pulsa el microfono para preguntarle al asistente financiero.";
+    summary.textContent = "";
+  }
 })();

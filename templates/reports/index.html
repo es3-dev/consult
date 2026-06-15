@@ -2,15 +2,79 @@
 {% block title %}Reportes | Consult-App{% endblock %}
 {% block page_title %}Reportes{% endblock %}
 {% block content %}
-<section class="metric-card max-w-3xl p-5">
-  <div class="flex items-center gap-2"><i data-lucide="download" class="h-5 w-5 text-indigo-600"></i><h2 class="text-base font-semibold">Generar reporte</h2></div>
-  <form method="get" class="mt-5 grid gap-4 md:grid-cols-2">
-    <div><label class="field-label">Desde</label><input type="date" name="start" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"></div>
-    <div><label class="field-label">Hasta</label><input type="date" name="end" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"></div>
-    <div><label class="field-label">Categoria</label><select name="category" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="">Todas</option>{% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}</select></div>
-    <div><label class="field-label">Tipo</label><select name="type" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="">Todos</option><option value="income">Ingresos</option><option value="expense">Gastos</option></select></div>
-    <button name="format" value="pdf" class="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Descargar PDF</button>
-    <button name="format" value="xlsx" class="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold shadow-sm">Descargar Excel</button>
-  </form>
-</section>
+<div class="grid gap-6 xl:grid-cols-[.9fr_1.1fr]">
+  <section class="metric-card p-5">
+    <div class="flex items-center gap-2">
+      <i data-lucide="file-bar-chart" class="h-5 w-5 text-indigo-600"></i>
+      <h2 class="text-base font-semibold">Generar reporte</h2>
+    </div>
+    <p class="mt-1 text-sm text-slate-500">Exporta tus movimientos con filtros y resumen financiero.</p>
+
+    <form method="get" class="mt-5 space-y-4">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="field-label" for="start">Desde</label>
+          <input id="start" type="date" name="start" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="field-label" for="end">Hasta</label>
+          <input id="end" type="date" name="end" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
+        </div>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label class="field-label" for="category">Categoria</label>
+          <select id="category" name="category" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <option value="">Todas las categorias</option>
+            {% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="type">Tipo</label>
+          <select id="type" name="type" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
+            <option value="">Ingresos y gastos</option>
+            <option value="income">Solo ingresos</option>
+            <option value="expense">Solo gastos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-2">
+        <button name="format" value="pdf" class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800">
+          <i data-lucide="file-text" class="h-4 w-4"></i>PDF ejecutivo
+        </button>
+        <button name="format" value="xlsx" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:border-slate-300">
+          <i data-lucide="sheet" class="h-4 w-4"></i>Excel editable
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="metric-card p-5">
+    <h2 class="text-base font-semibold">Contenido del reporte</h2>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+      <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <i data-lucide="sigma" class="h-5 w-5 text-slate-500"></i>
+        <p class="mt-3 text-sm font-semibold">Resumen</p>
+        <p class="mt-1 text-xs text-slate-500">Totales de ingresos, gastos y balance.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <i data-lucide="list-filter" class="h-5 w-5 text-slate-500"></i>
+        <p class="mt-3 text-sm font-semibold">Filtros</p>
+        <p class="mt-1 text-xs text-slate-500">Fecha, categoria y tipo de movimiento.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <i data-lucide="table-properties" class="h-5 w-5 text-slate-500"></i>
+        <p class="mt-3 text-sm font-semibold">Detalle</p>
+        <p class="mt-1 text-xs text-slate-500">Movimientos ordenados por fecha.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <i data-lucide="shield-check" class="h-5 w-5 text-slate-500"></i>
+        <p class="mt-3 text-sm font-semibold">Privacidad</p>
+        <p class="mt-1 text-xs text-slate-500">No incluye claves ni datos bancarios.</p>
+      </div>
+    </div>
+  </section>
+</div>
 {% endblock %}

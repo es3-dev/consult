@@ -238,6 +238,156 @@ El frontend incluye un boton flotante de microfono con Web Speech API, texto rec
 
 La arquitectura futura para Siri, Google Assistant y Alexa esta documentada en `docs/voice_integrations.txt`.
 
+## Uso de IA
+
+Consult-App incluye un modulo de Inteligencia Artificial en `ai_assistant/` para responder preguntas financieras del usuario.
+
+Funcionalidades:
+
+- Responder preguntas como `¿En qué gasto más dinero?`.
+- Preguntar al asistente usando el boton flotante de voz desde `/asistente/`.
+- Resumir la situacion financiera mensual.
+- Recomendar acciones para ahorrar.
+- Detectar presupuestos cerca del limite.
+- Comparar gastos contra el mes anterior.
+- Analizar fotos de facturas y proponer un gasto editable antes de guardarlo.
+
+Endpoint:
+
+```http
+POST /api/v1/assistant/ask/
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{"question": "¿Cuál es mi categoría más costosa?"}
+```
+
+Frontend:
+
+```text
+/asistente/
+```
+
+### Arquitectura del modulo
+
+La IA nunca accede directamente a la base de datos. El backend consulta Django ORM, genera datos agregados y anonimizados, construye el prompt y luego llama al proveedor seleccionado.
+
+```text
+Usuario -> Backend -> Base de datos -> Datos agregados -> IA -> Respuesta
+```
+
+No se envian:
+
+- Nombres completos.
+- Correos.
+- Tokens.
+- Contraseñas.
+- Identificadores sensibles.
+- Informacion bancaria.
+
+### Patron Strategy
+
+El modulo usa Strategy para alternar proveedores sin cambiar la logica principal.
+
+Contrato:
+
+```python
+AIProvider.generate(prompt: str) -> str
+```
+
+Proveedores soportados:
+
+- `mock`: proveedor local para demo sin internet.
+- `gemini`: Google Gemini con `gemini-2.5-flash`.
+- `groq`: Groq con `llama-3.3-70b-versatile`.
+
+Seleccion por variable de entorno:
+
+```env
+AI_PROVIDER=mock
+```
+
+Para Gemini:
+
+```env
+AI_PROVIDER=gemini
+GEMINI_API_KEY=tu_clave
+```
+
+Para Groq:
+
+```env
+AI_PROVIDER=groq
+GROQ_API_KEY=tu_clave
+```
+
+Para sustentacion universitaria se recomienda:
+
+```env
+AI_PROVIDER=mock
+```
+
+Asi la demo no depende de internet ni de claves externas.
+
+### Observabilidad
+
+Cada consulta registra en `AIInteractionLog`:
+
+- Proveedor usado.
+- Tiempo de respuesta.
+- Tokens estimados.
+- Estado de exito/error.
+- Fecha de consulta.
+
+No se almacena el prompt completo ni informacion sensible.
+
+## Registro desde SMS y Facturas
+
+Consult-App incluye dos flujos adicionales para registrar gastos:
+
+### SMS manual
+
+Ruta:
+
+```text
+/sms/
+```
+
+El usuario pega un SMS bancario, la app extrae monto y comercio con reglas locales, y el usuario selecciona la categoria antes de guardar.
+
+Ejemplo:
+
+```text
+Compra por $35.900 en D1. Tarjeta terminada en 1234.
+```
+
+La app propone:
+
+```text
+Monto: 35900
+Comercio: D1
+Categoria: seleccionada por el usuario
+```
+
+### Foto de factura
+
+Ruta:
+
+```text
+/facturas/
+```
+
+El usuario sube una imagen de factura. Si `AI_PROVIDER=gemini`, el sistema intenta extraer:
+
+- Monto.
+- Comercio.
+- Categoria sugerida.
+- Descripcion.
+
+El gasto nunca se crea automaticamente. Primero se muestra una propuesta editable y el usuario confirma.
+
+Si Gemini falla o no hay internet, se muestra un formulario manual para que la demo continue.
+
 ## Reportes
 
 La pantalla `/reportes/` permite filtrar por fecha, categoria y tipo de movimiento. Puede generar:

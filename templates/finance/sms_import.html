@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}SMS | Consult-App{% endblock %}
+{% block page_title %}Registrar desde SMS{% endblock %}
+{% block content %}
+<div class="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
+  <section class="metric-card p-5">
+    <h2 class="text-base font-semibold">Pegar SMS bancario</h2>
+    <p class="mt-1 text-sm text-slate-500">La app detecta monto y comercio. Tu eliges la categoria.</p>
+    <form method="post" class="mt-4 space-y-3">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="parse">
+      <label class="field-label" for="message">Mensaje SMS</label>
+      <textarea id="message" name="message" rows="6" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" placeholder="Compra por $35.900 en D1. Tarjeta terminada en 1234."></textarea>
+      <button class="w-full rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Analizar SMS</button>
+    </form>
+  </section>
+
+  <section class="metric-card p-5">
+    <h2 class="text-base font-semibold">Confirmar gasto</h2>
+    {% if parsed and parsed.amount %}
+      <form method="post" class="mt-4 grid gap-3 sm:grid-cols-2">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save">
+        <div>
+          <label class="field-label">Monto</label>
+          <input name="amount" value="{{ parsed.amount }}" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
+        </div>
+        <div>
+          <label class="field-label">Comercio</label>
+          <input name="merchant" value="{{ parsed.merchant }}" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="field-label">Categoria</label>
+          <select name="category" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" required>
+            {% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <button class="sm:col-span-2 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white">Guardar gasto</button>
+      </form>
+    {% else %}
+      <div class="mt-4 rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
+        Pega un SMS para ver la propuesta de gasto.
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

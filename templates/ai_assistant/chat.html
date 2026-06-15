@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Asistente Financiero | Consult-App{% endblock %}
+{% block page_title %}Asistente Financiero{% endblock %}
+{% block content %}
+<section
+  x-data="financialAssistant()"
+  x-init="init()"
+  class="metric-card mx-auto max-w-4xl p-5"
+>
+  <div class="flex items-center gap-2">
+    <i data-lucide="sparkles" class="h-5 w-5 text-indigo-600"></i>
+    <h2 class="text-base font-semibold">Chat financiero</h2>
+  </div>
+
+  <div class="mt-5 min-h-72 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+    <template x-if="messages.length === 0">
+      <div class="flex h-56 flex-col items-center justify-center text-center">
+        <i data-lucide="message-circle-question" class="h-9 w-9 text-slate-400"></i>
+        <p class="mt-3 text-sm font-medium text-slate-700">Haz una pregunta sobre tus finanzas</p>
+        <p class="mt-1 text-xs text-slate-500">Ejemplo: ¿En qué gasto más dinero?</p>
+      </div>
+    </template>
+
+    <template x-for="message in messages" :key="message.id">
+      <div :class="message.role === 'user' ? 'ml-auto bg-slate-950 text-white' : 'mr-auto border border-slate-200 bg-white text-slate-800'" class="max-w-[85%] rounded-lg px-4 py-3 text-sm shadow-sm">
+        <p x-text="message.text"></p>
+      </div>
+    </template>
+
+    <div x-show="loading" class="mr-auto max-w-xs rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500 shadow-sm">
+      Analizando tus datos...
+    </div>
+  </div>
+
+  <form @submit.prevent="ask()" class="mt-4 flex flex-col gap-3 sm:flex-row">
+    <label class="sr-only" for="ai-question">Pregunta</label>
+    <input id="ai-question" x-model="question" maxlength="300" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" placeholder="Resume mi situación financiera del mes">
+    <button :disabled="loading || question.trim().length < 3" class="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:opacity-50">
+      <i data-lucide="send" class="h-4 w-4"></i>
+      Enviar
+    </button>
+  </form>
+
+  <p x-show="error" x-text="error" class="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700"></p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+function financialAssistant() {
+  return {
+    question: '',
+    messages: [],
+    loading: false,
+    error: '',
+    csrfToken() {
+      return document.cookie.split(';').map(item => item.trim()).find(item => item.startsWith('csrftoken='))?.split('=')[1] || '';
+    },
+    init() {
+      window.addEventListener('consultapp:ask-ai', (event) => {
+        this.ask(event.detail.question || '');
+      });
+    },
+    async ask(forcedQuestion = '') {
+      const incoming = typeof forcedQuestion === 'string' ? forcedQuestion : '';
+      const text = (incoming || this.question).trim();
+      if (!text) return;
+      this.error = '';
+      this.loading = true;
+      this.messages.push({id: this.messageId(), role: 'user', text});
+      if (!incoming) this.question = '';
+      try {
+        const response = await fetch('/api/v1/assistant/ask/', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {'Content-Type': 'application/json', 'X-CSRFToken': this.csrfToken()},
+          body: JSON.stringify({question: text})
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'No se pudo obtener respuesta.');
+        this.messages.push({id: this.messageId(), role: 'assistant', text: data.answer});
+      } catch (error) {
+        this.error = error.message;
+      } finally {
+        this.loading = false;
+        this.$nextTick(() => lucide.createIcons());
+      }
+    },
+    messageId() {
+      return window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random());
+    }
+  }
+}
+</script>
+{% endblock %}

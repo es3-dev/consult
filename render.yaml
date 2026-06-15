@@ -28,3 +28,9 @@ services:
         value: "django.core.mail.backends.console.EmailBackend"
       - key: DEFAULT_FROM_EMAIL
         value: "Consult-App <noreply@consult-app.local>"
+      - key: AI_PROVIDER
+        value: "mock"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
